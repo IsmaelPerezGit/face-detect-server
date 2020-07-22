@@ -1,8 +1,11 @@
 const express = require("express");
 const app = express();
+const bcrypt = require("bcrypt-nodejs");
+const cors = require("cors");
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cors());
 
 const db = {
     users: [
@@ -26,7 +29,7 @@ const db = {
 };
 
 app.get("/", (req, res) => {
-    res.json(db.users);
+    res.send(db.users);
 });
 
 app.post("/signin", (req, res) => {
@@ -34,7 +37,7 @@ app.post("/signin", (req, res) => {
         req.body.email === db.users[0].email &&
         req.body.password === db.users[0].password
     ) {
-        res.json("Success");
+        res.json(db.users[0]);
     } else {
         res.status(400).json("error logging in...");
     }
@@ -47,7 +50,6 @@ app.post("/register", (req, res) => {
         id: "125",
         name: name,
         email: email,
-        password: password,
         entries: 0,
         joined: new Date(),
     });
