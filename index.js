@@ -26,7 +26,7 @@ const db = {
 };
 
 app.get("/", (req, res) => {
-    res.send("Hello");
+    res.json(db.users);
 });
 
 app.post("/signin", (req, res) => {
@@ -37,6 +37,50 @@ app.post("/signin", (req, res) => {
         res.json("Success");
     } else {
         res.status(400).json("error logging in...");
+    }
+});
+
+app.post("/register", (req, res) => {
+    const { email, name, password } = req.body;
+
+    db.users.push({
+        id: "125",
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date(),
+    });
+
+    res.json(db.users[db.users.length - 1]);
+});
+
+app.get("/profile/:id", (req, res) => {
+    const { id } = req.params;
+    let found = false;
+    db.users.forEach(user => {
+        if (user.id === id) {
+            found = true;
+            return res.json(user);
+        }
+    });
+    if (!found) {
+        res.status(400).json("not found");
+    }
+});
+
+app.post("/image", (req, res) => {
+    const { id } = req.body;
+    let found = false;
+    db.users.forEach(user => {
+        if (user.id === id) {
+            found = true;
+            user.entries++;
+            return res.json(user.entries);
+        }
+    });
+    if (!found) {
+        res.status(400).json("not found");
     }
 });
 
