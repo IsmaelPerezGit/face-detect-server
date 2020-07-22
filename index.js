@@ -70,9 +70,10 @@ app.post("/register", (req, res) => {
             name: name,
             joined: new Date(),
         })
-        .then(response => {
-            res.json(response);
-        });
+        .then(user => {
+            res.json(user[0]);
+        })
+        .then(err => res.status(400).json(err));
 });
 
 app.get("/profile/:id", (req, res) => {
