@@ -64,14 +64,15 @@ app.post("/register", (req, res) => {
     const { email, name, password } = req.body;
 
     pg("users")
+        .returning("*")
         .insert({
             email: email,
             name: name,
             joined: new Date(),
         })
-        .then(console.log);
-
-    res.json(db.users[db.users.length - 1]);
+        .then(response => {
+            res.json(response);
+        });
 });
 
 app.get("/profile/:id", (req, res) => {
