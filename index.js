@@ -2,6 +2,19 @@ const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
+const knex = require("knex");
+
+const pg = knex({
+    client: "pg",
+    connection: {
+        host: "127.0.0.1",
+        user: "ismaelperez",
+        password: "",
+        database: "facedetect",
+    },
+});
+
+console.log(pg.select("*").from("users"));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
