@@ -14,7 +14,11 @@ const pg = knex({
     },
 });
 
-console.log(pg.select("*").from("users"));
+pg.select("*")
+    .from("users")
+    .then(data => {
+        console.log(data);
+    });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -59,13 +63,13 @@ app.post("/signin", (req, res) => {
 app.post("/register", (req, res) => {
     const { email, name, password } = req.body;
 
-    db.users.push({
-        id: "125",
-        name: name,
-        email: email,
-        entries: 0,
-        joined: new Date(),
-    });
+    pg("users")
+        .insert({
+            email: email,
+            name: name,
+            joined: new Date(),
+        })
+        .then(console.log);
 
     res.json(db.users[db.users.length - 1]);
 });
