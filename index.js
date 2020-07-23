@@ -20,21 +20,16 @@ const clar = new Clarifai.App({
     apiKey: CLARIFAI_KEY,
 });
 
-const corsOptions = {
-    origin: "https://glacial-escarpment-55461.herokuapp.com",
-    optionsSuccessStatus: 200,
-};
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.get("/", (req, res) => {
     // res.send(db.users);
     res.send("it is working");
 });
 
-app.post("/signin", cors(corsOptions), (req, res) => {
+app.post("/signin", (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json("incorrect form submission");
