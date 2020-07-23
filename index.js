@@ -21,7 +21,7 @@ const clar = new Clarifai.App({
 });
 
 const corsOptions = {
-    origin: "https://git.heroku.com/glacial-escarpment-55461.git",
+    origin: "https://glacial-escarpment-55461.herokuapp.com",
     optionsSuccessStatus: 200,
 };
 
