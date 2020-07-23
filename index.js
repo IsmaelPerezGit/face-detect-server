@@ -65,29 +65,21 @@ app.post("/register", (req, res) => {
 
     pg("users")
         .returning("*")
-        .insert({
-            email: email,
-            name: name,
-            joined: new Date(),
-        })
-        .then(user => {
-            res.json(user[0]);
-        })
+        .insert({ email, name, joined: new Date() })
+        .then(user => res.json(user[0]))
         .catch(err => res.status(400).json("Unable to register..."));
 });
 
 app.get("/profile/:id", (req, res) => {
     const { id } = req.params;
-    let found = false;
-    db.users.forEach(user => {
-        if (user.id === id) {
-            found = true;
-            return res.json(user);
-        }
-    });
-    if (!found) {
-        res.status(400).json("not found");
-    }
+
+    pg.select("*")
+        .from("users")
+        .where({ id })
+        .then(user =>
+            user.length ? res.json(user[0]) : res.status(400).json("Not found")
+        )
+        .catch(err => res.status(400).json("Error getting user..."));
 });
 
 app.put("/image", (req, res) => {
