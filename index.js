@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
 const Clarifai = require("clarifai");
-const CLARIFAI_KEY = require("./keys");
+const CLARIFAI_KEY = process.env.CLARIFAI_KEY || require("./keys");
 
 const pg = knex({
     client: "pg",
@@ -17,7 +17,7 @@ const pg = knex({
 });
 
 const clar = new Clarifai.App({
-    apiKey: process.env.CLARIFAI_KEY || CLARIFAI_KEY,
+    apiKey: CLARIFAI_KEY,
 });
 
 app.use(express.urlencoded({ extended: false }));
