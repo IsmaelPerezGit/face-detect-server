@@ -3,6 +3,8 @@ const app = express();
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
+const Clarifai = require("clarifai");
+const CLARIFAI_KEY = require("./keys");
 
 const pg = knex({
     client: "pg",
@@ -14,6 +16,10 @@ const pg = knex({
     },
 });
 
+const clar = new Clarifai.App({
+    apiKey: CLARIFAI_KEY,
+});
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
@@ -23,16 +29,20 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json("incorrect form submission");
+    }
     pg.select("email", "hash")
         .from("login")
-        .where("email", "=", req.body.email)
+        .where("email", "=", email)
         .then(data => {
-            const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
+            const isValid = bcrypt.compareSync(password, data[0].hash);
             isValid
                 ? pg
                       .select("*")
                       .from("users")
-                      .where("email", "=", req.body.email)
+                      .where("email", "=", email)
                       .then(user => res.json(user[0]))
                       .catch(err => res.status(400).json("unable to get user"))
                 : res.status(400).json("wrong credentials");
@@ -80,6 +90,15 @@ app.put("/image", (req, res) => {
         .returning("entries")
         .then(entries => res.json(entries[0]))
         .catch(err => res.status(400).json("unable to get entries"));
+});
+
+app.post("/imageurl", (req, res) => {
+    clar.models
+        .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
+        .then(data => {
+            res.json(data);
+        })
+        .catch(err => res.status(400).json("unable to work with API"));
 });
 
 app.listen(4000, () => {
