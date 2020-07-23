@@ -101,6 +101,8 @@ app.post("/imageurl", (req, res) => {
         .catch(err => res.status(400).json("unable to work with API"));
 });
 
-app.listen(4000, () => {
-    console.log("App listening on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
 });
