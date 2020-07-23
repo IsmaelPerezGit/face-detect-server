@@ -14,36 +14,9 @@ const pg = knex({
     },
 });
 
-pg.select("*")
-    .from("users")
-    .then(data => {
-        console.log(data);
-    });
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
-
-const db = {
-    users: [
-        {
-            id: "123",
-            name: "John",
-            email: "John@email.com",
-            password: "password",
-            entries: 0,
-            joined: new Date(),
-        },
-        {
-            id: "124",
-            name: "Sally",
-            email: "Sally@email.com",
-            password: "password",
-            entries: 0,
-            joined: new Date(),
-        },
-    ],
-};
 
 app.get("/", (req, res) => {
     res.send(db.users);
@@ -55,16 +28,14 @@ app.post("/signin", (req, res) => {
         .where("email", "=", req.body.email)
         .then(data => {
             const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
-            if (isValid) {
-                return pg
-                    .select("*")
-                    .from("users")
-                    .where("email", "=", req.body.email)
-                    .then(user => res.json(user[0]))
-                    .catch(err => res.status(400).json("unable to get user"));
-            } else {
-                res.status(400).json("wrong credentials");
-            }
+            isValid
+                ? pg
+                      .select("*")
+                      .from("users")
+                      .where("email", "=", req.body.email)
+                      .then(user => res.json(user[0]))
+                      .catch(err => res.status(400).json("unable to get user"))
+                : res.status(400).json("wrong credentials");
         })
         .catch(err => res.status(400).json("wrong credentials"));
 });
@@ -73,10 +44,7 @@ app.post("/register", (req, res) => {
     const { email, name, password } = req.body;
     const hash = bcrypt.hashSync(password);
     pg.transaction(trx => {
-        trx.insert({
-            hash: hash,
-            email: email,
-        })
+        trx.insert({ hash, email })
             .into("login")
             .returning("email")
             .then(loginEmail => {
