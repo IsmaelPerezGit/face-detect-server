@@ -17,7 +17,7 @@ const pg = knex({
 });
 
 const clar = new Clarifai.App({
-    apiKey: CLARIFAI_KEY,
+    apiKey: process.env.CLARIFAI_KEY || CLARIFAI_KEY,
 });
 
 app.use(express.urlencoded({ extended: false }));
