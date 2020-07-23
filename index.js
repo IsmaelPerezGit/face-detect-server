@@ -50,29 +50,35 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
-    if (
-        req.body.email === db.users[0].email &&
-        req.body.password === db.users[0].password
-    ) {
-        res.json(db.users[0]);
-    } else {
-        res.status(400).json("error logging in...");
-    }
+    req.body.email === db.users[0].email &&
+    req.body.password === db.users[0].password
+        ? res.json(db.users[0])
+        : res.status(400).json("error logging in...");
 });
 
 app.post("/register", (req, res) => {
     const { email, name, password } = req.body;
-
-    pg("users")
-        .returning("*")
-        .insert({ email, name, joined: new Date() })
-        .then(user => res.json(user[0]))
-        .catch(err => res.status(400).json("Unable to register..."));
+    const hash = bcrypt.hashSync(password);
+    pg.transaction(trx => {
+        trx.insert({
+            hash: hash,
+            email: email,
+        })
+            .into("login")
+            .returning("email")
+            .then(loginEmail => {
+                return trx("users")
+                    .returning("*")
+                    .insert({ email: loginEmail[0], name, joined: new Date() })
+                    .then(user => res.json(user[0]));
+            })
+            .then(trx.commit)
+            .catch(trx.rollback);
+    }).catch(err => res.status(400).json("Unable to register..."));
 });
 
 app.get("/profile/:id", (req, res) => {
     const { id } = req.params;
-
     pg.select("*")
         .from("users")
         .where({ id })
@@ -84,14 +90,11 @@ app.get("/profile/:id", (req, res) => {
 
 app.put("/image", (req, res) => {
     const { id } = req.body;
-
     pg("users")
         .where("id", "=", id)
         .increment("entries", 1)
         .returning("entries")
-        .then(entries => {
-            res.json(entries[0]);
-        })
+        .then(entries => res.json(entries[0]))
         .catch(err => res.status(400).json("unable to get entries"));
 });
 
