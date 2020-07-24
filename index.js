@@ -6,6 +6,8 @@ const knex = require("knex");
 const Clarifai = require("clarifai");
 const CLARIFAI_KEY = process.env.CLARIFAI_KEY;
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 const pg = knex({
     client: "pg",
     connection: {
