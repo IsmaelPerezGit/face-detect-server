@@ -95,9 +95,9 @@ app.put("/image", (req, res) => {
 
 app.post("/imageurl", (req, res) => {
     clar.models
-        .predict(clar.FACE_DETECT_MODEL, req.body.input)
+        .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
         .then(data => {
-            res.json(data);
+            return res.json(data);
         })
         .catch(err => res.status(400).json("unable to work with API"));
 });
