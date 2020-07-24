@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
 const Clarifai = require("clarifai");
-const CLARIFAI_KEY = process.env.CLARIFAI_KEY || require("./keys");
+const CLARIFAI_KEY = process.env.CLARIFAI_KEY;
 
 const pg = knex({
     client: "pg",
@@ -16,7 +16,7 @@ const pg = knex({
     },
 });
 
-const app = new Clarifai.App({
+const clar = new Clarifai.App({
     apiKey: CLARIFAI_KEY,
 });
 
@@ -96,7 +96,7 @@ app.put("/image", (req, res) => {
 app.post("/imageurl", (req, res) => {
     console.log("REQ", req);
     console.log("RES", res);
-    app.models
+    clar.models
         .predict("c0c0ac362b03416da06ab3fa36fb58e3", req.body.input)
         .then(data => {
             res.json(data);
