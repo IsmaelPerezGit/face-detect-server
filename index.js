@@ -101,7 +101,7 @@ app.post("/imageurl", (req, res) => {
         .then(data => {
             res.json(data);
         })
-        .catch(err => res.status(400).json("unable to work with API"));
+        .catch(err => res.status(400).json("unable to work with API", err));
 });
 
 const PORT = process.env.PORT || 4000;
