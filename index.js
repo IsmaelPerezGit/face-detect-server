@@ -9,10 +9,8 @@ const CLARIFAI_KEY = process.env.CLARIFAI_KEY || require("./keys");
 const pg = knex({
     client: "pg",
     connection: {
-        host: "127.0.0.1",
-        user: "ismaelperez",
-        password: "",
-        database: "facedetect",
+        connectionString: process.env.DATABASE_URL,
+        ssl: true,
     },
 });
 
