@@ -95,7 +95,7 @@ app.put("/image", (req, res) => {
 
 app.post("/imageurl", (req, res) => {
     clar.models
-        .predict("c0c0ac362b03416da06ab3fa36fb58e3", req.body.input)
+        .predict("FACE_DETECT_MODEL", req.body.input)
         .then(data => {
             res.json(data);
         })
