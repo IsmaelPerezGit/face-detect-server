@@ -23,10 +23,15 @@ const clar = new Clarifai.App({
     apiKey: CLARIFAI_KEY,
 });
 
+const corsOptions = {
+    origin: 'https://face-detect-new.herokuapp.com/',
+    optionSuccessStatus: 200
+}
+
 app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
     // res.send(db.users);
