@@ -1,31 +1,26 @@
+
 const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const knex = require("knex");
-const morgan = require("morgan");
 const Clarifai = require("clarifai");
-const CLARIFAI_KEY_DEV = require("./keys");
-const CLARIFAI_KEY = process.env.CLARIFAI_KEY || CLARIFAI_KEY_DEV;
+const CLARIFAI_KEY = process.env.CLARIFAI_KEY;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 const pg = knex({
     client: "pg",
-    connection: process.env.POSTGRES_URI,
-    // {
-    // connectionString: process.env.DATABASE_URL,
-    // ssl: true,
-    // }
+    connection: {
+        connectionString: process.env.DATABASE_URL,
+        ssl: true,
+    },
 });
 
 const clar = new Clarifai.App({
     apiKey: CLARIFAI_KEY,
 });
 
-app.options('/signin', cors())
-
-app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
