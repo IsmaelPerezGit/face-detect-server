@@ -24,7 +24,7 @@ const clar = new Clarifai.App({
 });
 
 const corsOptions = {
-    origin: 'https://face-detect-new.herokuapp.com/',
+    origin: 'https://face-detect-new.herokuapp.com',
     optionSuccessStatus: 200
 }
 
